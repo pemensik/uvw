@@ -8,7 +8,7 @@
 
 Name:           uvw
 Version:        2.9.0
-%forgemeta -i
+%forgemeta
 Release:        %autorelease
 Summary:        Header-only easy to use libuv C++ wrapper
 
@@ -34,17 +34,31 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       pkg-config
 Requires:       libuv-devel >= %{libuv_ver}
 Provides:       %{name}-static
+Suggests:       %{name}-doc
 
 %description    devel
-uvw started as a header-only, event based, tiny and easy to use wrapper for libuv written in modern C++.
+uvw started as a header-only, event based, tiny and easy to use
+wrapper for libuv written in modern C++.
 Now it's finally available also as a compilable static library.
 
-The basic idea is to hide completely the C-ish interface of libuv behind a graceful C++ API. Currently, no uv_*_t data structure is actually exposed by the library.
-Note that uvw stays true to the API of libuv and it doesn't add anything to its interface. For the same reasons, users of the library must follow the same rules which are used with libuv.
+The basic idea is to hide completely the C-ish interface of libuv behind a graceful C++ API.
+Currently, no uv_*_t data structure is actually exposed by the library.
+Note that uvw stays true to the API of libuv and it doesn't add anything
+to its interface. For the same reasons, users of the library must follow
+the same rules which are used with libuv.
 
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
+%package        doc
+Summary:        %{summary} API documentation
+BuildArch:      noarch
+
+%description    doc
+uvw started as a header-only, event based, tiny and easy to use
+wrapper for libuv written in modern C++.
+
+The %{name}-doc package contains API documentation in HTML format.
 
 %prep
 %forgeautosetup -p1
@@ -76,6 +90,10 @@ echo 'Requires: libuv' >> libuvw-static.pc.in
 %doc README.md
 %{_includedir}/%{name}*
 %{_libdir}/pkgconfig/libuvw*
+
+%files doc
+%license LICENSE
+%dir %{_docdir}/%{name}-%{version}
 %{_docdir}/%{name}-%{version}/html
 
 
