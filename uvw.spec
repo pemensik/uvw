@@ -34,7 +34,7 @@ Summary:        %{summary}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       pkg-config
 Requires:       libuv-devel >= %{libuv_ver}
-Provides:       %{name}-static
+Provides:       %{name}-static = %{version}-%{release}
 Suggests:       %{name}-doc
 
 %description    devel
