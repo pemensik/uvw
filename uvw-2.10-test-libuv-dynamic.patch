@@ -1,0 +1,46 @@
+From efefe50cbf7b0069174b8381805ad9cf51a719a5 Mon Sep 17 00:00:00 2001
+From: Petr Mensik <pemensik@redhat.com>
+Date: Sat, 21 Aug 2021 20:54:11 +0200
+Subject: [PATCH] Support dynamic linkage of tests
+
+If libuv is not fetched, try to find and provide libuv parameters using
+pkg-config. Makes dynamic linking to shared libuv library from the
+system.
+---
+ test/CMakeLists.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index b482523..d071c04 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -44,6 +44,18 @@ endif()
+ function(ADD_UVW_TEST TEST_NAME TEST_SOURCE)
+     add_executable(${TEST_NAME} ${TEST_SOURCE})
+ 
++    if (NOT FETCH_LIBUV)
++        find_package(PkgConfig QUIET)
++        if (PkgConfig_FOUND)
++            pkg_check_modules(LIBUV REQUIRED libuv)
++
++            target_include_directories(
++                ${TEST_NAME}
++                PUBLIC ${LIBUV_INCLUDE_DIRS}
++            )
++        endif(PkgConfig_FOUND)
++    endif(NOT FETCH_LIBUV)
++
+     target_link_libraries(
+         ${TEST_NAME}
+         PRIVATE
+@@ -52,6 +64,7 @@ function(ADD_UVW_TEST TEST_NAME TEST_SOURCE)
+             $<$<TARGET_EXISTS:uvw::uvw-static>:uvw::uvw-static>            
+             $<$<TARGET_EXISTS:uv::uv-shared>:uv::uv-shared>
+             $<$<TARGET_EXISTS:uvw::uvw-shared>:uvw::uvw-shared>
++            ${LIBUV_LDFLAGS} ${LIBUV_LIBRARIES}
+             GTest::Main
+             Threads::Threads
+             ${LIBRT}
+-- 
+2.31.1
+

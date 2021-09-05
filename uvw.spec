@@ -1,5 +1,5 @@
 %global forgeurl0 https://github.com/skypjack/uvw
-%global libuv_ver 1.41
+%global libuv_ver 1.42
 %global tag0 v%{version}_libuv_v%{libuv_ver}
 %global distprefix %{nil}
 
@@ -7,16 +7,17 @@
 %global debug_package %{nil}
 
 Name:           uvw
-Version:        2.9.0
+Version:        2.10.0
 %forgemeta
 Release:        %autorelease
 Summary:        Header-only easy to use libuv C++ wrapper
 
-License:        MIT
+License:        MIT and CC-BY
 URL:            https://github.com/skypjack/uvw
 Source0:        %forgesource
 
-Patch1:         uvw-2.9-test-libuv-dynamic.patch
+# https://github.com/skypjack/uvw/pull/253
+Patch1:         uvw-2.10-test-libuv-dynamic.patch
 
 BuildRequires:  gcc-c++, cmake
 BuildRequires:  libuv-devel >= %{libuv_ver}
@@ -63,7 +64,6 @@ The %{name}-doc package contains API documentation in HTML format.
 %prep
 %forgeautosetup -p1
 
-echo "%{_docdir}"
 sed -e 's,DESTINATION share/${PROJECT_NAME},DESTINATION share/doc/${PROJECT_NAME},' \
     -i docs/CMakeLists.txt
 # Make uvw semi-dynamic. libuv should be linked dynamic, uvw static way.
@@ -80,6 +80,10 @@ sed -e 's|ASSERT_NE(cpuInfo\[0\].speed, decltype(cpuInfo\[0\].speed){0});|// &|'
 
 %install
 %cmake_install
+
+pushd %{buildroot}%{_libdir}/pkgconfig/
+ln -s libuvw-static.pc libuvw.pc
+popd
 
 
 %check
